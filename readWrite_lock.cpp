@@ -10,7 +10,7 @@ private:
     mutex mutex1;
     condition_variable read_cond, wirte_cond;
     int read_count;
-    int write_lock;
+    bool write_lock;
 
 public:
     ReadWriteLock() : read_count(0), write_lock(false) {}
@@ -56,12 +56,14 @@ int main() {
         lock.acquire_read_lock();
         cout << "Reader 1 entered the critical section." << endl;
         lock.release_read_lock();
+        cout << "Reader 1 EXITED critical section." << endl;
     });
 
     thread reader2([&] {
         lock.acquire_read_lock();
         cout << "Reader 2 entered the critical section." << endl;
         lock.release_read_lock();
+        cout << "Reader 2 EXITED critical section." << endl;
     });
 
     // Simulate a writer
@@ -69,11 +71,13 @@ int main() {
         lock.acquire_write_lock();
         cout << "Writer entered the critical section." << endl;
         lock.release_write_lock();
+        cout << "WRITER EXITED critical section." << endl;
     });
 
     writer.join();
     reader1.join();
     reader2.join();
+
 
     return 0;
 }
